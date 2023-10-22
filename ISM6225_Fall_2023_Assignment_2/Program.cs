@@ -1,12 +1,4 @@
-﻿/* 
- 
-YOU ARE NOT ALLOWED TO MODIFY ANY FUNCTION DEFINATION's PROVIDED.
-WRITE YOUR CODE IN THE RESPECTIVE QUESTION FUNCTION BLOCK
-
-
-*/
-
-using System.Text;
+﻿using System.Text;
 
 namespace ISM6225_Fall_2023_Assignment_2
 {
@@ -32,7 +24,7 @@ namespace ISM6225_Fall_2023_Assignment_2
             Console.WriteLine();
             Console.WriteLine();
 
-            //Question 3:
+            //Question3:
             Console.WriteLine("Question 3");
             int[] prices_array = { 7, 1, 5, 3, 6, 4 };
             int max_profit = MaxProfit(prices_array);
@@ -47,7 +39,7 @@ namespace ISM6225_Fall_2023_Assignment_2
             Console.WriteLine(IsStrobogrammaticNumber);
             Console.WriteLine();
             Console.WriteLine();
-
+            
             //Question 5:
             Console.WriteLine("Question 5");
             int[] numbers = { 1, 2, 3, 1, 1, 3 };
@@ -58,13 +50,14 @@ namespace ISM6225_Fall_2023_Assignment_2
 
             //Question 6:
             Console.WriteLine("Question 6");
-            int[] maximum_numbers = { 3, 2, 1 };
+            int[] maximum_numbers = { 3, 2, 1};
             int third_maximum_number = ThirdMax(maximum_numbers);
             Console.WriteLine(third_maximum_number);
             Console.WriteLine();
             Console.WriteLine();
 
             //Question 7:
+            
             Console.WriteLine("Question 7:");
             string currentState = "++++";
             IList<string> combinations = GeneratePossibleNextMoves(currentState);
@@ -72,6 +65,7 @@ namespace ISM6225_Fall_2023_Assignment_2
             Console.WriteLine(combinationsString);
             Console.WriteLine();
             Console.WriteLine();
+            
 
             //Question 8:
             Console.WriteLine("Question 8:");
@@ -82,38 +76,100 @@ namespace ISM6225_Fall_2023_Assignment_2
             Console.WriteLine();
         }
 
-        /*
-        
-        Question 1:
-        You are given an inclusive range [lower, upper] and a sorted unique integer array nums, where all elements are within the inclusive range. A number x is considered missing if x is in the range [lower, upper] and x is not in nums. Return the shortest sorted list of ranges that exactly covers all the missing numbers. That is, no element of nums is included in any of the ranges, and each missing number is covered by one of the ranges.
-        Example 1:
-        Input: nums = [0,1,3,50,75], lower = 0, upper = 99
-        Output: [[2,2],[4,49],[51,74],[76,99]]  
-        Explanation: The ranges are:
-        [2,2]
-        [4,49]
-        [51,74]
-        [76,99]
-        Example 2:
-        Input: nums = [-1], lower = -1, upper = -1
-        Output: []
-        Explanation: There are no missing ranges since there are no missing numbers.
-
-        Constraints:
-        -109 <= lower <= upper <= 109
-        0 <= nums.length <= 100
-        lower <= nums[i] <= upper
-        All the values of nums are unique.
-
-        Time complexity: O(n), space complexity:O(1)
-        */
-
         public static IList<IList<int>> FindMissingRanges(int[] nums, int lower, int upper)
         {
             try
             {
-                // Write your code here and you can modify the return value according to the requirements
-                return new List<IList<int>>();
+                // Ensuring that the constraint is met: -109 <= lower <= upper <= 109
+                if (lower > upper || lower <-109 || upper >109)
+                {
+                    throw new ArgumentException("Invalid lower or upper bounds.");
+                }
+
+                // Ensuring that length of array is between 0 and 100 (inclusive)
+                if (nums.Length > 100 || nums.Length<0)
+                {
+                    throw new ArgumentException("The length of the nums array should be between 0 and 100");
+                }
+
+                // Handle duplicate values
+                HashSet<int> uniqueValues = new HashSet<int>();
+                foreach (int num in nums)
+                {
+                    if (!uniqueValues.Add(num))
+                    {
+                        throw new ArgumentException("Duplicate values found in the nums array.");
+                    }
+                }
+
+                IList<IList<int>> result = new List<IList<int>>();
+
+                // Check if the input array 'nums' is empty or null
+                if (nums == null || nums.Length == 0)
+                {
+                    if (lower == upper)
+                    {
+                        // If the lower and upper bounds are the same, add a single-element range
+                        result.Add(new List<int> { lower });
+                    }
+                    else
+                    {
+                        // If the lower and upper bounds are different, add a range spanning from lower to upper
+                        result.Add(new List<int> { lower, upper });
+                    }
+                }
+                else
+                {
+                    // Check if there is a missing range before the first element
+                    if (lower < nums[0])
+                    {
+                        if (lower == nums[0] - 1)
+                        {
+                            // If the missing range is just one element, add it to 'result'
+                            result.Add(new List<int> { lower });
+                        }
+                        else
+                        {
+                            // If the missing range is more than one element, add it as a range
+                            result.Add(new List<int> { lower, nums[0] - 1 });
+                        }
+                    }
+
+                for (int i = 1; i < nums.Length; i++)
+                {
+                    long diff = (long)nums[i] - nums[i - 1];
+                    if (diff > 1)
+                    {
+                        if (diff == 2)
+                        {
+                            // If there is exactly one missing element, add it to 'result'
+                            result.Add(new List<int> { nums[i - 1] + 1 });
+                        }
+                        else
+                        {
+                            // If there is more than one missing element, add the range to 'result'
+                            result.Add(new List<int> { nums[i - 1] + 1, nums[i] - 1 });
+                        }
+                    }
+                }
+
+            // Check if there is a missing range after the last element
+            if (upper > nums[nums.Length - 1])
+            {
+                if (upper == nums[nums.Length - 1] + 1)
+                {
+                    // If the missing range is just one element, add it to 'result'
+                    result.Add(new List<int> { upper });
+                }
+                else
+                {
+                    // If the missing range is more than one element, add it as a range
+                    result.Add(new List<int> { nums[nums.Length - 1] + 1, upper });
+                }
+            }
+        }
+
+        return result;
             }
             catch (Exception)
             {
@@ -121,241 +177,289 @@ namespace ISM6225_Fall_2023_Assignment_2
             }
 
         }
-
-        /*
-         
-        Question 2
-
-        Given a string s containing just the characters '(', ')', '{', '}', '[' and ']', determine if the input string is valid.An input string is valid if:
-        Open brackets must be closed by the same type of brackets.
-        Open brackets must be closed in the correct order.
-        Every close bracket has a corresponding open bracket of the same type.
- 
-        Example 1:
-
-        Input: s = "()"
-        Output: true
-        Example 2:
-
-        Input: s = "()[]{}"
-        Output: true
-        Example 3:
-
-        Input: s = "(]"
-        Output: false
-
-        Constraints:
-
-        1 <= s.length <= 104
-        s consists of parentheses only '()[]{}'.
-
-        Time complexity:O(n^2), space complexity:O(1)
-        */
 
         public static bool IsValid(string s)
         {
             try
             {
-                // Write your code here and you can modify the return value according to the requirements
-                return s.Length == 0;
+                // Ensuring that length of input string is between 1 and 104 (inclusive)
+                if (s.Length < 1 || s.Length > 104)
+                    {
+                        throw new ArgumentException("The length of the input string should be between 1 and 104");
+                    }
+
+                // Define a set of valid characters for the string
+                HashSet<char> validChars = new HashSet<char> { '(', ')', '[', ']', '{', '}' };
+                    foreach (char c in s)
+                    {
+                        if (!validChars.Contains(c))
+                        {
+                            // If the string contains other characters, it can't be valid
+                            throw new ArgumentException("Invalid characters.");
+                        }
+                    }
+
+                // If the string length is odd, it can't be valid
+                if (s.Length % 2 != 0)
+                    {
+                        return false;
+                    }
+
+                // Create a stack to store opening brackets
+                Stack<char> stack = new Stack<char>();
+
+                foreach (char c in s)
+                {
+                    if (c == '(' || c == '[' || c == '{')
+                    {
+                        // Push open brackets to the stack
+                        stack.Push(c);
+                    }
+                    else
+                    {
+                        if (stack.Count == 0)
+                        {
+                            // If the stack is empty, there's no corresponding open bracket
+                            return false;
+                        }
+
+                        char openBracket = stack.Pop();
+
+                        // Check if the current closing bracket matches the most recent open bracket
+                        if ((c == ')' && openBracket != '(') ||
+                            (c == ']' && openBracket != '[') ||
+                            (c == '}' && openBracket != '{'))
+                        {
+                            return false;
+                        }
+                    }
+                }
+
+            // If the stack is empty at the end, all brackets were properly closed
+            return stack.Count == 0;
             }
+
             catch (Exception)
             {
                 throw;
             }
         }
-
-        /*
-
-        Question 3:
-        You are given an array prices where prices[i] is the price of a given stock on the ith day.You want to maximize your profit by choosing a single day to buy one stock and choosing a different day in the future to sell that stock.Return the maximum profit you can achieve from this transaction. If you cannot achieve any profit, return 0.
-        Example 1:
-        Input: prices = [7,1,5,3,6,4]
-        Output: 5
-        Explanation: Buy on day 2 (price = 1) and sell on day 5 (price = 6), profit = 6-1 = 5.
-        Note that buying on day 2 and selling on day 1 is not allowed because you must buy before you sell.
-
-        Example 2:
-        Input: prices = [7,6,4,3,1]
-        Output: 0
-        Explanation: In this case, no transactions are done and the max profit = 0.
- 
-        Constraints:
-        1 <= prices.length <= 105
-        0 <= prices[i] <= 104
-
-        Time complexity: O(n), space complexity:O(1)
-        */
 
         public static int MaxProfit(int[] prices)
         {
-            try
-            {
-                // Write your code here and you can modify the return value according to the requirements
-                return 1;
-            }
+            try{
+                // Ensuring that length of array is between 1 and 105 (inclusive)
+                if (prices.Length < 1 || prices.Length > 105)
+                    {
+                        throw new ArgumentException("The length of the price array should be between 1 and 105");
+                    }
+
+                // Ensuring that price value in array is between 0 and 104 (inclusive)
+                foreach (int price in prices)
+                    {
+                        if (price < 0 || price > 104)
+                        {
+                            throw new ArgumentException("Invalid input: prices[i] is out of range.");
+                        }
+                    }
+
+                // Initialize the minimum price as a high value
+                int minPrice = Int32.MaxValue; 
+                int maxProfit = 0;
+
+                for (int i = 0; i < prices.Length; i++)
+                {
+                    if (prices[i] < minPrice)
+                    {
+                        // Update the minimum price if we find a smaller value
+                        minPrice = prices[i]; 
+                    }
+                    else if (prices[i] - minPrice > maxProfit)
+                    {
+                        // Update the maximum profit if selling on this day is profitable
+                        maxProfit = prices[i] - minPrice; 
+                    }
+                }
+
+                return maxProfit;
+             }
             catch (Exception)
             {
                 throw;
             }
         }
-
-        /*
-        
-        Question 4:
-        Given a string num which represents an integer, return true if num is a strobogrammatic number.A strobogrammatic number is a number that looks the same when rotated 180 degrees (looked at upside down).
-        Example 1:
-
-        Input: num = "69"
-        Output: true
-        Example 2:
-
-        Input: num = "88"
-        Output: true
-        Example 3:
-
-        Input: num = "962"
-        Output: false
-
-        Constraints:
-        1 <= num.length <= 50
-        num consists of only digits.
-        num does not contain any leading zeros except for zero itself.
-
-        Time complexity:O(n), space complexity:O(1)
-        */
-
+  
         public static bool IsStrobogrammatic(string s)
         {
             try
             {
-                // Write your code here and you can modify the return value according to the requirements
-                return false;
+                // Ensuring that length of array is between 0 and 50 (inclusive)
+                if (s.Length<1 | s.Length>50)
+                {
+                    throw new ArgumentException("The length of the string should be between 0 and 50");
+                }
+
+                // Check if the input consists only digits
+                for (int i = 0; i < s.Length; i++)
+                {
+                    if (!Char.IsDigit(s[i]))
+                    {
+                        throw new ArgumentException("String contains other characters");
+                    }
+                }
+
+                // Check for leading zeros (except for zero itself)
+                if (s.Length > 1 && s[0] == '0' && s[s.Length - 1] != '0')
+                {
+                    throw new ArgumentException("Leading zeros found");
+                }
+        
+                int left = 0;
+                int right = s.Length - 1;
+
+                while (left <= right)
+                {
+                    char leftChar = s[left];
+                    char rightChar = s[right];
+                    if (leftChar == '0' && rightChar == '0' ||
+                        leftChar == '1' && rightChar == '1' ||
+                        leftChar == '8' && rightChar == '8' ||
+                        leftChar == '6' && rightChar == '9' ||
+                        leftChar == '9' && rightChar == '6')
+                    {
+                        left++;
+                        right--;
+                    }
+                    else
+                    {
+                        return false; // Not a strobogrammatic number
+                    }
+                }
+                return true; // It's a strobogrammatic number
             }
             catch (Exception)
             {
                 throw;
             }
         }
-
-        /*
-
-        Question 5:
-        Given an array of integers nums, return the number of good pairs.A pair (i, j) is called good if nums[i] == nums[j] and i < j. 
-
-        Example 1:
-
-        Input: nums = [1,2,3,1,1,3]
-        Output: 4
-        Explanation: There are 4 good pairs (0,3), (0,4), (3,4), (2,5) 0-indexed.
-        Example 2:
-
-        Input: nums = [1,1,1,1]
-        Output: 6
-        Explanation: Each pair in the array are good.
-        Example 3:
-
-        Input: nums = [1,2,3]
-        Output: 0
-
-        Constraints:
-
-        1 <= nums.length <= 100
-        1 <= nums[i] <= 100
-
-        Time complexity:O(n), space complexity:O(n)
-
-        */
-
+ 
         public static int NumIdenticalPairs(int[] nums)
         {
             try
             {
-                // Write your code here and you can modify the return value according to the requirements
-                return 0;
+                //Ensuring that length of array is between 1 and 100 (inclusive)
+                if (nums.Length < 1 || nums.Length > 100)
+                 {
+                     throw new ArgumentException("The length of the nums array should be between 1 and 100");
+                 }
+
+                // Ensuring that num value in array is between 0 and 100 (inclusive)    
+                foreach (int num in nums)
+                {
+                    if (num < 0 || num > 100)
+                    {
+                        throw new ArgumentException("Invalid input: num[i] is out of range.");
+                    }
+                }
+
+                Dictionary<int, int> countMap = new Dictionary<int, int>();
+                int goodPairs = 0;
+
+                foreach (int i in nums)
+                {
+                    if (countMap.ContainsKey(i))
+                    {
+                        goodPairs += countMap[i]; // Increase goodPairs by the count of existing numbers.
+                        countMap[i]++; // Increment the count of this number.
+                    }
+                    else
+                    {
+                        countMap[i] = 1; // Initialize the count for this number.
+                    }
+                }
+
+                return goodPairs;
             }
             catch (Exception)
             {
                 throw;
             }
         }
-
-        /*
-        Question 6
-
-        Given an integer array nums, return the third distinct maximum number in this array. If the third maximum does not exist, return the maximum number.
-
-        Example 1:
-
-        Input: nums = [3,2,1]
-        Output: 1
-        Explanation:
-        The first distinct maximum is 3.
-        The second distinct maximum is 2.
-        The third distinct maximum is 1.
-        Example 2:
-
-        Input: nums = [1,2]
-        Output: 2
-        Explanation:
-        The first distinct maximum is 2.
-        The second distinct maximum is 1.
-        The third distinct maximum does not exist, so the maximum (2) is returned instead.
-        Example 3:
-
-        Input: nums = [2,2,3,1]
-        Output: 1
-        Explanation:
-        The first distinct maximum is 3.
-        The second distinct maximum is 2 (both 2's are counted together since they have the same value).
-        The third distinct maximum is 1.
-        Constraints:
-
-        1 <= nums.length <= 104
-        -231 <= nums[i] <= 231 - 1
-
-        Time complexity:O(nlogn), space complexity:O(n)
-        */
 
         public static int ThirdMax(int[] nums)
         {
             try
             {
-                // Write your code here and you can modify the return value according to the requirements
-                return 0;
+                // Ensuring that length of array is between 1 and 104 (inclusive)
+                if (nums.Length < 1 || nums.Length > 104)
+                {
+                    throw new ArgumentException("The length of the nums array should be between 1 and 104");
+                }
+
+                // Ensuring that num value in array is between -231 and 230 (inclusive)
+                foreach (int num in nums)
+                {
+                    if (num < -231 || num > 230)
+                    {
+                        throw new ArgumentException("Invalid input: num[i] is out of range.");
+                    }
+                }
+
+                // Use a set to store unique values in descending order.
+                SortedSet<int> uniqueValues = new SortedSet<int>(nums, Comparer<int>.Create((a, b) => b.CompareTo(a)));
+
+                if (uniqueValues.Count < 3)
+                {
+                    // If there are fewer than 3 distinct maximums, return the maximum.
+                    return uniqueValues.First();
+                }
+                else
+                {
+                    // If there are at least 3 distinct maximums, return the third maximum.
+                    return uniqueValues.ElementAt(2);
+                }
             }
             catch (Exception)
             {
                 throw;
             }
         }
-
-        /*
-        
-        Question 7:
-
-        You are playing a Flip Game with your friend. You are given a string currentState that contains only '+' and '-'. You and your friend take turns to flip two consecutive "++" into "--". The game ends when a person can no longer make a move, and therefore the other person will be the winner.Return all possible states of the string currentState after one valid move. You may return the answer in any order. If there is no valid move, return an empty list [].
-        Example 1:
-        Input: currentState = "++++"
-        Output: ["--++","+--+","++--"]
-        Example 2:
-
-        Input: currentState = "+"
-        Output: []
- 
-        Constraints:
-        1 <= currentState.length <= 500
-        currentState[i] is either '+' or '-'.
-
-        Timecomplexity:O(n), Space complexity:O(n)
-        */
 
         public static IList<string> GeneratePossibleNextMoves(string currentState)
         {
             try
             {
-                // Write your code here and you can modify the return value according to the requirements
-                return new List<string>() { };
+                //Ensuring that length of currentState string is between 1 and 500 (inclusive)
+                if (currentState.Length < 1 || currentState.Length > 500)
+                {
+                    throw new ArgumentException("The length of the string should be between 1 and 500");
+                }
+                
+                // Define a set of valid characters
+                HashSet<char> validChars = new HashSet<char> { '+', '-' };
+                    foreach (char c in currentState)
+                    {
+                        if (!validChars.Contains(c))
+                        {
+                            // If the string contains other characters, it can't be valid
+                            throw new ArgumentException("Invalid characters found");
+                        }
+                    }
+
+                List<string> possibleMoves = new List<string>();
+
+                for (int i = 0; i < currentState.Length - 1; i++)
+                {
+                    if (currentState[i] == '+' && currentState[i + 1] == '+')
+                    {
+                        char[] nextState = currentState.ToCharArray();
+                        nextState[i] = '-';
+                        nextState[i + 1] = '-';
+                        possibleMoves.Add(new string(nextState));
+                    }
+                }
+
+                return possibleMoves;
             }
             catch (Exception)
             {
@@ -363,31 +467,24 @@ namespace ISM6225_Fall_2023_Assignment_2
             }
         }
 
-        /*
-
-        Question 8:
-
-        Given a string s, remove the vowels 'a', 'e', 'i', 'o', and 'u' from it, and return the new string.
-        Example 1:
-
-        Input: s = "leetcodeisacommunityforcoders"
-        Output: "ltcdscmmntyfrcdrs"
-
-        Example 2:
-
-        Input: s = "aeiou"
-        Output: ""
-
-        Timecomplexity:O(n), Space complexity:O(n)
-        */
-
         public static string RemoveVowels(string s)
-        {
-            // Write your code here and you can modify the return value according to the requirements
-            return "";
-        }
+            {
+                //Create empty string to store result
+                string result = "";
+                foreach (char c in s)
+                {
+                    if (c != 'a' && c != 'e' && c != 'i' && c != 'o' && c != 'u' &&
+                        c != 'A' && c != 'E' && c != 'I' && c != 'O' && c != 'U')
+                    {
+                        result += c;
+                    }
+                }
 
-        /* Inbuilt Functions - Don't Change the below functions */
+                return result;
+            }
+
+
+        
         static string ConvertIListToNestedList(IList<IList<int>> input)
         {
             StringBuilder sb = new StringBuilder();
@@ -410,7 +507,6 @@ namespace ISM6225_Fall_2023_Assignment_2
 
             return sb.ToString();
         }
-
 
         static string ConvertIListToArray(IList<string> input)
         {
