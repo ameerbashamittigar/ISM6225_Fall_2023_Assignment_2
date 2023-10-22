@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 ﻿using System.Text;
+=======
+using System.Text;
+>>>>>>> 250b5edd1322ca1250aeb0379414812c35caaa3d
 
 namespace ISM6225_Fall_2023_Assignment_2
 {
